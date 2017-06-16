@@ -70,11 +70,11 @@ For comparison, we also use the Google "questions-words" analogy data set [ref].
 ## Results
 Figure 1 shows the trace of *D(A,B)* (blue) as the number of sentences increases, and the google accuracy (green). 
 
-![Figure 1](/home/carlosm/Projects/ShiCo/sprintPaper/figure1.png "Figure 1")
+![Figure 1](./figure1.png "Figure 1")
 
 Figure 2 shows the values on the diagonal of *D(A,B)* as the number of sentences increases. 
 
-![Figure 2](/home/carlosm/Projects/ShiCo/sprintPaper/figure2.png "Figure 2")
+![Figure 2](./figure2.png "Figure 2")
 
 ## Conclusion
 xxx
