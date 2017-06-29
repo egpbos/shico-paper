@@ -1,5 +1,5 @@
 # Data driven measure of convergence for word embeddings
-C. Martinez-Ortiz, J. Attema, [add your name here]
+C. Martinez-Ortiz, J. Attema, E.G.P. Bos [add your name here]
 
 ## Abstract
 Word embeddings have been used in a wide range of applications. It is generally agreed that training a word embedding requires a significant amount of data, however it is never entirely clear how much data is enough for the word embedding to capture the semantic structure of the language it is being trained with. Specific tests, based on word analogies, have been used to decide when a word embedding has captured enough of the language structure to be considered meaningful. However this approach has several issues, amongst others the language specificity of such tests.
@@ -26,13 +26,18 @@ The data driven method for word embedding evaluation measures the amount of chan
 This paper is structured as follows: **Method** section describes the data-drive procedure for measuring convergence of word embeddings;  the **Experiments** section describes the setup used to evaluate word embedding convergence; the **Results** section discusses the evaluation; concluding remarks are presented in the **Conclusion** section.
 
 ## Method
-We will start by giving a brief overview of how semantic models work, more details can be found in the original papers [Mikolov_CS2013]. Semantic models work by creating a semantic space in which each word in the known vocabulary is represented by a vector. This semantic space has dimensions *N*, which is set at the beginning of the training process. The size of the vocabulary, *V*, is also determined from the start. Note that it is not unusual to restrict the vocabulary size to only include words which appear frequently (more than *k* times) on the corpus. The semantic space is represented by an embedding matrix *S* of size *NxV*.
+We will start by giving a brief overview of how semantic models work, more details can be found in the original papers [Mikolov_CS2013]. Semantic models work by creating a semantic space in which each word in the known vocabulary is represented by a vector. This semantic space has dimensions *N*, which is set at the beginning of the training process. The size of the vocabulary, *V*, is also determined from the start. Note that it is not unusual to restrict the vocabulary size to only include words which appear frequently (more than *k* times) in the corpus.
 
-Any given word *w* in the vocabulary can be represented in "vocabulary space" as a vector of size *V* using "one-hot" encoding. We can use matrix *S* to find the embedding of *w*, which we call *e_w*:
+To find the semantic space vector --- or "embedding" --- of a word, we apply the following procedure.
+Any given word *w* in the vocabulary can be represented in "vocabulary space" as a vector of size *V* using "one-hot" encoding.
+The linear transformation from vocabulary to semantic space is represented by an embedding matrix *S* of size *NxV*.
+We can use matrix *S* to find the embedding of *w*, which we call *e_w*:
 
 $$e_w = S \cdot w$$
 
-Vector *e_w* is represented size *N*; words which have similar meaning will be located close by in this semantic space - word similarity is usually measured using cosine similarity [ref?]. The semantic model learns the structure of the semantic space by analysing sentences in the corpus and updating the *S* matrix. We are interested in finding a matrix *S* which is a good representation of our data. We need to compare different versions of *S* changing over time: *S_1*, *S_2*, ..., *S_t*. Given two points in time, *A* and *B*, there will be two versions of the embedding matrix, *S_A* and *S_B*, we want to find a transformation matrix such that:
+where vector *e_w* is of size *N*.
+Words which have similar meaning will be located close together in this semantic space - word similarity is usually measured using cosine similarity [ref?]. The semantic model learns the structure of the semantic space by analysing sentences in the corpus and updating the *S* matrix. We are interested in finding a matrix *S* which is a good representation of our data. We need to compare different versions of *S* changing over time: *S_1*, *S_2*, ..., *S_t*. Given two points in time, *A* and *B*, there will be two versions of the embedding matrix, *S_A* and *S_B*.
+We want to find a transformation matrix such that:
 
 $$S_B \approx S_A \cdot T$$
 
@@ -47,15 +52,18 @@ For each dimension `i` in the embedded space:
   Let V2_i be W_i projected in embedded space S_B
   Let V2_i be the i-th dimension of the transformation matrix T
 ```
-** *NOTE:** to convert $V1_i$ back into vocabulary space, we take the dot product of the embedded vector and the inverse of embedding matrix.
+** *NOTE:** to convert $V1_i$ back into vocabulary space, we take the product of the embedded vector and the inverse of the embedding matrix.
+(**EGP: Note note: dot product of a vector and a matrix does not exist, so I removed "dot"; or did you mean something special?**)
 
-*T* will end be of size *NxN*.
+*T* will be of size *NxN*.
 
-We will use the transformation *T* to measure how much the embedded space has changed between times *A* and *B*. To ensure that our measure is symmetric, we will calculate two transformation matrices, *T(A,B)* to go from *A* to *B* and *T(B,A)* to go from *B* to *A*. We call the element-wise product of these two matrices the divergence matrix:
+We will use the transformation matrix *T* to measure how much the embedded space has changed between times *A* and *B*. To ensure that our measure is symmetric, we will calculate two transformation matrices, *T(A,B)* to go from *A* to *B* and *T(B,A)* to go from *B* to *A*. We call the element-wise product of these two matrices the divergence matrix:
+(**EGP: Element-wise product? Why?**)
 
 $D(A,B) = T(A,B) * T(B,A)$
 
-It is important to mention that the divergence matrix will be equal the identity matrix if the space embeddings *S_A* and *S_B* are equivalent).
+It is important to mention that the divergence matrix will be equal to the identity matrix if the space embeddings *S_A* and *S_B* are equivalent).
+(**EGP: this is not true if the multiplication is element-wise! Only for a normal matrix-multiplication, because then $T(A,B) = T^{-1}(B,A)$**)
 
 ## Experiments
 In this section we describe the experimental process we have followed to validate our approach. For this experiment we used the Times news paper archives (*I need to ask Jose how can we reference the corpus*) between 1900 and 1980. We trained a semantic model, using gensim word2vec implementation [ref]. We set the dimensions on the semantic space to 300 (*N = 300*).
