@@ -49,6 +49,16 @@ For each dimension `i` in the embedded space:
 ```
 ** *NOTE:** to convert $V1_i$ back into vocabulary space, we take the dot product of the embedded vector and the inverse of embedding matrix.
 
+Alternatively, one can calculate T using the following equation for each column T_i of T:
+$$T_i = S_B S_A^{-1} V1_i $$
+where V1_i is the unit vector along dimension i in the semantic space defined by S_A
+
+**EGP: step by step, based on the pseudocode:
+T_i = V2_i
+V2_i = S_B w_i
+w_i = S_A^{-1} V1_i
+***
+
 *T* will end be of size *NxN*.
 
 We will use the transformation *T* to measure how much the embedded space has changed between times *A* and *B*. To ensure that our measure is symmetric, we will calculate two transformation matrices, *T(A,B)* to go from *A* to *B* and *T(B,A)* to go from *B* to *A*. We call the element-wise product of these two matrices the divergence matrix:
